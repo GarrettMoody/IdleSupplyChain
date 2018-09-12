@@ -2,17 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class Tile : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IDropHandler
+public class Tile : MonoBehaviour
 {
 
     public Material defaultMaterial;
+    private float defaultMaterialAlpha;
+    private float defaultMaterialValue;
+
+    public Canvas tileCanvas;
+    public GameObject stockPanel;
+    public Text stockNumber;
+    private int stockNumberValue;
+
+    protected enum Direction {Up, Right, Down, Left}; //DO NOT CHANGE. Order matters.
+    protected bool[] validInput = new bool[4];
+    protected bool[] validOutput = new bool[4];
+
     private PlayerManager playerManager;
     // Use this for initialization
     protected virtual void Start()
     {
+        //Set Object material and default color options
         this.GetComponent<Renderer>().material = defaultMaterial;
         playerManager = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        defaultMaterialAlpha = defaultMaterial.color.a;
+        float h, s;
+        Color.RGBToHSV(defaultMaterial.color, out h,out s,out defaultMaterialValue);
+
+        //not all tiles will have a canvas
+        if(tileCanvas != null) {
+            tileCanvas.gameObject.SetActive(false);
+            stockNumberValue = 0;
+        }
     }
 
     // Update is called once per frame
@@ -42,24 +65,34 @@ public class Tile : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         this.GetComponent<Renderer>().material.color = color;
     }
 
-    virtual public void OnDrag(PointerEventData eventData)
+    public void ResetTile()
     {
-        Debug.Log("T Drag");
-        this.transform.position = Input.mousePosition;
+        SetMaterial(defaultMaterial);
+        SetAlpha(defaultMaterialAlpha);
+        SetMaterialValue(defaultMaterialValue);
     }
 
-    virtual public void OnEndDrag(PointerEventData eventData)
-    {
-        Debug.Log("T End Drag");
+    public void ActivateTile() {
+        this.GetComponent<BoxCollider>().enabled = true;
     }
 
-    virtual public void OnDrop(PointerEventData eventData)
-    {
-        playerManager.OnTileDrop();
+    public void DeactivateTile() {
+        this.GetComponent<BoxCollider>().enabled = false;
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        Debug.Log("T Begin Drag");
+    virtual public void OnClick() {
+        //Rotate tile 90 degrees
+        this.transform.Rotate(0f, 90f, 0f);
+
+        //Change valid input and output to reflect 90 degree turn
+        bool inputZero = validInput[0];
+        bool outputZero = validOutput[0];
+        for (int i = 0; i < validInput.Length - 2; i++) {
+            validInput[i] = validInput[i + 1];
+            validOutput[i] = validOutput[i + 1];
+        }
+            //we just overrode valid[0], need to set valid[3] individually
+        validInput[validInput.Length - 1] = inputZero;
+        validOutput[validOutput.Length - 1] = outputZero;
     }
 }
