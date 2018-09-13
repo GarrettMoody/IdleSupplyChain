@@ -108,7 +108,6 @@ public class GameManager : MonoBehaviour {
             for (int columnsIndex = 0; columnsIndex < columns; columnsIndex++) {
                 if(gameBoard[rowsIndex, columnsIndex] == boardTile) {
                     gameBoard[rowsIndex, columnsIndex] = replaceTile;
-                    Destroy(boardTile.gameObject);
                 }
             }
         }

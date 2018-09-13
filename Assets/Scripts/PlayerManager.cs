@@ -15,7 +15,6 @@ public class PlayerManager : MonoBehaviour {
 
     private struct ObjectInHand {
         public GameObject gameObject;
-        public bool snappedToFreeTile;
     }
     private ObjectInHand objectInHand;
 
@@ -24,8 +23,7 @@ public class PlayerManager : MonoBehaviour {
         money = 0f;
         objectInHand = new ObjectInHand
         {
-            gameObject = null,
-            snappedToFreeTile = false
+            gameObject = null
         };
     }
     // Update is called once per frame
@@ -60,6 +58,7 @@ public class PlayerManager : MonoBehaviour {
                             objectInHand.gameObject.transform.position = hit.transform.gameObject.transform.position;
                             ShowObjectInHand();
                             gameManager.ReplaceBoardTile(hit.transform.gameObject.GetComponent<Tile>(), objectInHand.gameObject.GetComponent<Tile>());
+                            Destroy(hit.transform.gameObject);
                             DropItemInHand();
                         }
                     }
@@ -86,20 +85,6 @@ public class PlayerManager : MonoBehaviour {
 
         //Update mouse moving
         if (Physics.Raycast(ray, out hit, 100.0f)) {
-            //hit new game object this frame
-            //if(objectPointingTo != hit.transform.gameObject) {
-            //    if (objectPointingTo != null)
-            //    {
-            //        //if old object was tile, reset tile
-            //        if (IsObjectTile(objectPointingTo)) {
-            //            objectPointingTo.GetComponent<Tile>().ResetTile();
-            //            //was pointing to tile and isn't anymore
-            //            if(!IsObjectTile(hit.transform.gameObject) && objectInHand != null) {
-            //                ShowObjectInHand();
-            //            }
-            //        } 
-            //    }
-            //}
 
             objectPointingTo = hit.transform.gameObject;
             //object in hand
@@ -110,8 +95,6 @@ public class PlayerManager : MonoBehaviour {
                     //Pointing at free tile
                     if (hit.transform.gameObject.GetComponent<FreeTile>() != null)
                     {
-                        //HideObjectInHand();
-                        objectInHand.snappedToFreeTile = true;
                         objectInHand.gameObject.transform.position = hit.transform.position;
                         objectInHand.gameObject.GetComponent<Tile>().SetMaterialValue(.7f);
                     }
@@ -133,6 +116,7 @@ public class PlayerManager : MonoBehaviour {
         FreeTile newTile = (FreeTile)Instantiate(freeTilePrefab, obj.transform.position, obj.transform.rotation);
         newTile.SetMaterial(obj.GetComponent<Renderer>().material);
         newTile.SetMaterialValue(.7f);
+        gameManager.ReplaceBoardTile(obj.GetComponent<Tile>(), newTile);
         PickUpObject(obj);
     }
 
