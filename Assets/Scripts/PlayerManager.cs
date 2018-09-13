@@ -113,10 +113,7 @@ public class PlayerManager : MonoBehaviour {
                         //HideObjectInHand();
                         objectInHand.snappedToFreeTile = true;
                         objectInHand.gameObject.transform.position = hit.transform.position;
-                        //objectInHand.gameObject.GetComponent<Tile>()
-                        FreeTile freeTile = hit.transform.gameObject.GetComponent<FreeTile>();
-                        freeTile.SetMaterial(objectInHand.gameObject.GetComponent<Renderer>().material);
-                        freeTile.SetMaterialValue(.7f);
+                        objectInHand.gameObject.GetComponent<Tile>().SetMaterialValue(.7f);
                     }
                     objectInHand.gameObject.transform.position = new Vector3(hit.point.x, hit.point.y - 0.01f, hit.point.z);
                 }

@@ -73,6 +73,7 @@ public class Tile : MonoBehaviour
     }
 
     public void ActivateTile() {
+        ResetTile();
         this.GetComponent<BoxCollider>().enabled = true;
     }
 
