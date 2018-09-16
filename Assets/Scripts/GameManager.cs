@@ -31,11 +31,11 @@ public class GameManager : MonoBehaviour {
     //Global variables
     public float timerScale; //The number of seconds it takes to complete a cycle
     public PlayerManager playerManager;
-    private bool timerExpired = false; //Used to show if the timer completed a cycle this frame
+    private bool timerExpired; //Used to show if the timer completed a cycle this frame
 
 	// Use this for initialization
 	void Start () {
-        gameBoard = new Tile[rows, columns];
+        gameBoard = new Tile[columns, rows];
         CreateTileBoard();
         timer.value = timer.minValue;
 	}
@@ -45,20 +45,18 @@ public class GameManager : MonoBehaviour {
         UpdateTimer(Time.deltaTime);
 
         if(timerExpired) {
-            Debug.Log("TimerExpired True");
             //Iterate through each game tile and see if there is something to do
             foreach (Tile tile in gameBoard) {
-                //Debug.Log(tile.name);
+                tile.CompleteAction();
             }
         }
-
         timerExpired = false;
 	}
 
     void CreateTileBoard() {
-        for (int i = 0; i < rows; i++)
+        for (int i = 0; i < columns; i++)
         {
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < rows; j++)
             {
                 GameObject newTile = Instantiate(freeTilePrefab, new Vector3(separationX * i + startX, height, separationZ * j + startZ), Quaternion.identity);
                 if(newTile.GetComponent<Tile>() != null) {
@@ -104,13 +102,103 @@ public class GameManager : MonoBehaviour {
     }
 
     public void ReplaceBoardTile(Tile boardTile, Tile replaceTile) {
-        for (int rowsIndex = 0; rowsIndex < rows; rowsIndex++) {
-            for (int columnsIndex = 0; columnsIndex < columns; columnsIndex++) {
-                if(gameBoard[rowsIndex, columnsIndex] == boardTile) {
-                    gameBoard[rowsIndex, columnsIndex] = replaceTile;
+        int rowIndex, columnIndex;
+        GetTileIndexes(boardTile,out rowIndex,out columnIndex);
+        gameBoard[columnIndex, rowIndex] = replaceTile;
+    }
+
+    public Tile GetTileUp(Tile referenceTile) {
+        int rowIndex, columnIndex;
+        GetTileIndexes(referenceTile, out rowIndex, out columnIndex);
+        //If referenceTile is not on the top row
+        return rowIndex < rows - 1 ? gameBoard[columnIndex, rowIndex + 1] : null;
+    }
+
+    public Tile GetTileDown(Tile referenceTile)
+    {
+        int rowIndex, columnIndex;
+        GetTileIndexes(referenceTile, out rowIndex, out columnIndex);
+        //If referenceTile is not on the bottom row
+        return rowIndex > 0 ? gameBoard[columnIndex, rowIndex - 1] : null;
+    }
+
+    public Tile GetTileRight(Tile referenceTile)
+    {
+        int rowIndex, columnIndex;
+        GetTileIndexes(referenceTile, out rowIndex, out columnIndex);
+        //If referenceTile is not on the far right column
+        return columnIndex < columns - 1 ? gameBoard[columnIndex + 1, rowIndex] : null;
+    }
+
+    public Tile GetTileLeft(Tile referenceTile)
+    {
+        int rowIndex, columnIndex;
+        GetTileIndexes(referenceTile, out rowIndex, out columnIndex);
+        //If referenceTile is not far left column
+        return columnIndex > 0 ? gameBoard[columnIndex - 1, rowIndex] : null;
+    }
+
+    private void GetTileIndexes(Tile referenceTile, out int rowIndex, out int columnIndex) {
+        //retrieves the row and column index of the reference tile in the gameboard. If there is no match in the gameboard
+        //the function returns -1 for the indexes. 
+        for (int i = 0; i < columns; i++) {
+            for (int j = 0; j < rows; j++) {
+                if(gameBoard[i, j] == referenceTile) {
+                    columnIndex = i;
+                    rowIndex = j;
+                    return;
                 }
             }
         }
+        rowIndex = -1;
+        columnIndex = -1;
+        return;
     }
 
+    public void SendResources(Tile fromTile, int direction, int amount) {
+        Tile toTile;
+        switch (direction)
+        {
+            case Direction.DIRECTION_UP:
+                toTile = GetTileUp(fromTile);
+                //can tile recieve input
+                if (toTile.CanInputResources(Direction.DIRECTION_DOWN))
+                {
+                    toTile.AddResourceNumberValue(amount);
+                    fromTile.SubtractResourceNumberValue(amount);
+                }
+
+                break;
+            case Direction.DIRECTION_RIGHT:
+                toTile = GetTileRight(fromTile);
+                //can tile recieve input
+                if (toTile.CanInputResources(Direction.DIRECTION_LEFT))
+                {
+                    toTile.AddResourceNumberValue(amount);
+                    fromTile.SubtractResourceNumberValue(amount);
+                }
+
+                break;
+            case Direction.DIRECTION_DOWN:
+                toTile = GetTileDown(fromTile);
+                //can tile recieve input
+                if (toTile.CanInputResources(Direction.DIRECTION_UP))
+                {
+                    toTile.AddResourceNumberValue(amount);
+                    fromTile.SubtractResourceNumberValue(amount);
+                }
+
+                break;
+            case Direction.DIRECTION_LEFT:
+                toTile = GetTileLeft(fromTile);
+                //can tile recieve input
+                if (toTile.CanInputResources(Direction.DIRECTION_RIGHT))
+                {
+                    toTile.AddResourceNumberValue(amount);
+                    fromTile.SubtractResourceNumberValue(amount);
+                }
+
+                break;
+        }
+    }
 }

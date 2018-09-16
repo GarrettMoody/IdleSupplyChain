@@ -97,6 +97,8 @@ public class PlayerManager : MonoBehaviour {
                     {
                         objectInHand.gameObject.transform.position = hit.transform.position;
                         objectInHand.gameObject.GetComponent<Tile>().SetMaterialValue(.7f);
+                    } else {
+                        objectInHand.gameObject.GetComponent<Tile>().ResetTile();
                     }
                     objectInHand.gameObject.transform.position = new Vector3(hit.point.x, hit.point.y - 0.01f, hit.point.z);
                 }

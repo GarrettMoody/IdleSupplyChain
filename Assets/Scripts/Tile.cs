@@ -6,21 +6,24 @@ using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
-
+    //Default material variables
     public Material defaultMaterial;
     private float defaultMaterialAlpha;
     private float defaultMaterialValue;
 
+    //UI variables
     public Canvas tileCanvas;
-    public GameObject stockPanel;
-    public Text stockNumber;
-    private int stockNumberValue;
+    public GameObject resourcePanel;
+    public Text resourceNumber;
 
-    protected enum Direction {Up, Right, Down, Left}; //DO NOT CHANGE. Order matters.
+    //Global variables
+    protected int resourceNumberValue;
+    protected int maxResourceNumber;
+
     protected bool[] validInput = new bool[4];
     protected bool[] validOutput = new bool[4];
 
-    private PlayerManager playerManager;
+    protected PlayerManager playerManager;
     // Use this for initialization
     protected virtual void Start()
     {
@@ -34,14 +37,19 @@ public class Tile : MonoBehaviour
         //not all tiles will have a canvas
         if(tileCanvas != null) {
             tileCanvas.gameObject.SetActive(false);
-            stockNumberValue = 0;
+            resourceNumberValue = 0;
         }
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-
+        if(resourceNumberValue > 0) {
+            ShowResourceNumber();
+            UpdateResourceNumber();
+        } else {
+            HideResourceNumber();
+        }
     }
 
     public void SetMaterial(Material newMaterial)
@@ -86,14 +94,73 @@ public class Tile : MonoBehaviour
         this.transform.Rotate(0f, 90f, 0f);
 
         //Change valid input and output to reflect 90 degree turn
-        bool inputZero = validInput[0];
-        bool outputZero = validOutput[0];
-        for (int i = 0; i < validInput.Length - 2; i++) {
-            validInput[i] = validInput[i + 1];
-            validOutput[i] = validOutput[i + 1];
+        bool inputZero = validInput[validInput.Length - 1];
+        bool outputZero = validOutput[validOutput.Length - 1]; 
+        for (int i = validInput.Length - 1; i > 0; i--) {
+            validInput[i] = validInput[i - 1];
+            validOutput[i] = validOutput[i - 1];
         }
             //we just overrode valid[0], need to set valid[3] individually
-        validInput[validInput.Length - 1] = inputZero;
-        validOutput[validOutput.Length - 1] = outputZero;
+        validInput[0] = inputZero;
+        validOutput[0] = outputZero;
+    }
+
+    public virtual void CompleteAction(){
+
+    }
+
+    private void ShowResourceNumber() {
+        if (tileCanvas != null && resourcePanel != null & resourceNumber != null)
+        {
+            tileCanvas.gameObject.SetActive(true);
+            resourcePanel.gameObject.SetActive(true);
+            resourceNumber.gameObject.SetActive(true);
+        }
+    }
+
+    private void HideResourceNumber() {
+        if(resourceNumber != null) {
+            resourceNumber.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateResourceNumber() {
+        if(resourceNumber != null) {
+            resourceNumber.text = resourceNumberValue.ToString();
+        } 
+    }
+
+    protected int GetNumberOfValidOutputs() {
+        int count = 0;
+        foreach(bool output in validOutput) { 
+            if(output) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int GetResourceNumberValue() {
+        return resourceNumberValue;
+    }
+
+    public void AddResourceNumberValue(int amount) {
+        resourceNumberValue += amount;
+        if(resourceNumberValue > maxResourceNumber) {
+            resourceNumberValue = maxResourceNumber;
+        }
+    }
+
+    public void SubtractResourceNumberValue(int amount)
+    {
+        resourceNumberValue -= amount;
+        if (resourceNumberValue < 0)
+        {
+            resourceNumberValue = 0;
+        }
+    }
+
+    public bool CanInputResources(int direction) {
+        return resourceNumberValue < maxResourceNumber && validInput[direction] ? true : false;
     }
 }
