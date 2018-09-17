@@ -10,7 +10,7 @@ public class Road : Tile {
         validInput = new bool[] { true, true, true, true };
         validOutput = new bool[] { false, false, false, false };
         validOutput[Direction.DIRECTION_LEFT] = true;
-        maxResourceNumber = 2;
+        maxResourceValue = 10;
 	}
 	
 	// Update is called once per frame
@@ -22,7 +22,7 @@ public class Road : Tile {
     {
         base.CompleteAction();
         //if there is enough resources to go around
-        if (resourceNumberValue >= GetNumberOfValidOutputs())
+        if (resourceValue >= GetNumberOfValidOutputs())
         {
             //for each direction
             for (int index = 0; index < validOutput.Length; index++)

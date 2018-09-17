@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 222543027291989236}
   - component: {fileID: 114731616936094188}
   m_Layer: 0
-  m_Name: ResourceNumber
+  m_Name: ResourceValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90,7 +90,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918469697604540}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.7415805, y: 0.55, z: -3.8264804}
+  m_LocalPosition: {x: -9.7271385, y: 0.55, z: -9.212608}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224103129557659894}
@@ -262,7 +262,7 @@ MonoBehaviour:
   defaultMaterial: {fileID: 2100000, guid: 4abd1638b7ff641c79baf7b698a2cd35, type: 2}
   tileCanvas: {fileID: 223131042620717846}
   resourcePanel: {fileID: 1074685909188962}
-  resourceNumber: {fileID: 114731616936094188}
+  resourceValueText: {fileID: 114731616936094188}
 --- !u!114 &114903408490253384
 MonoBehaviour:
   m_ObjectHideFlags: 1

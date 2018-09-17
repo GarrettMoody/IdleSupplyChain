@@ -14,11 +14,11 @@ public class Tile : MonoBehaviour
     //UI variables
     public Canvas tileCanvas;
     public GameObject resourcePanel;
-    public Text resourceNumber;
+    public Text resourceValueText;
 
     //Global variables
-    protected int resourceNumberValue;
-    protected int maxResourceNumber;
+    protected int resourceValue;
+    protected int maxResourceValue;
 
     protected bool[] validInput = new bool[4];
     protected bool[] validOutput = new bool[4];
@@ -37,18 +37,18 @@ public class Tile : MonoBehaviour
         //not all tiles will have a canvas
         if(tileCanvas != null) {
             tileCanvas.gameObject.SetActive(false);
-            resourceNumberValue = 0;
+            resourceValue = 0;
         }
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-        if(resourceNumberValue > 0) {
-            ShowResourceNumber();
-            UpdateResourceNumber();
+        if(resourceValue > 0) {
+            ShowResourceValueText();
+            UpdateResourceValueText();
         } else {
-            HideResourceNumber();
+            HideResourceValueText();
         }
     }
 
@@ -109,24 +109,25 @@ public class Tile : MonoBehaviour
 
     }
 
-    private void ShowResourceNumber() {
-        if (tileCanvas != null && resourcePanel != null & resourceNumber != null)
+    private void ShowResourceValueText() {
+        if (tileCanvas != null && resourcePanel != null & resourceValueText != null)
         {
             tileCanvas.gameObject.SetActive(true);
             resourcePanel.gameObject.SetActive(true);
-            resourceNumber.gameObject.SetActive(true);
+            resourceValueText.gameObject.SetActive(true);
         }
     }
 
-    private void HideResourceNumber() {
-        if(resourceNumber != null) {
-            resourceNumber.gameObject.SetActive(false);
+    private void HideResourceValueText() {
+        if(resourceValueText != null) {
+            resourceValueText.gameObject.SetActive(false);
+            resourcePanel.gameObject.SetActive(false);
         }
     }
 
-    private void UpdateResourceNumber() {
-        if(resourceNumber != null) {
-            resourceNumber.text = resourceNumberValue.ToString();
+    private void UpdateResourceValueText() {
+        if(resourceValueText != null) {
+            resourceValueText.text = resourceValue.ToString();
         } 
     }
 
@@ -140,27 +141,28 @@ public class Tile : MonoBehaviour
         return count;
     }
 
-    public int GetResourceNumberValue() {
-        return resourceNumberValue;
+    public int GetResourceValue() {
+        return resourceValue;
     }
 
-    public void AddResourceNumberValue(int amount) {
-        resourceNumberValue += amount;
-        if(resourceNumberValue > maxResourceNumber) {
-            resourceNumberValue = maxResourceNumber;
+    public void AddResourceValue(int amount) {
+        resourceValue += amount;
+        if(resourceValue > maxResourceValue) {
+            resourceValue = maxResourceValue;
         }
     }
 
-    public void SubtractResourceNumberValue(int amount)
+    public bool SubtractResourceValue(int amount)
     {
-        resourceNumberValue -= amount;
-        if (resourceNumberValue < 0)
-        {
-            resourceNumberValue = 0;
+        if(amount > resourceValue) {
+            return false;
+        } else {
+            resourceValue -= amount;
+            return true;
         }
     }
 
     public bool CanInputResources(int direction) {
-        return resourceNumberValue < maxResourceNumber && validInput[direction] ? true : false;
+        return resourceValue < maxResourceValue && validInput[direction] ? true : false;
     }
 }

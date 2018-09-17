@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222682606060843630}
   - component: {fileID: 114504066426365584}
   m_Layer: 0
-  m_Name: ResourceNumber
+  m_Name: ResourceValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90,7 +90,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1332918730448344}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -12.171207, y: 0.55, z: -16.315979}
+  m_LocalPosition: {x: -8.606216, y: 0.55, z: -9.176353}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224436078260076278}
@@ -273,7 +273,7 @@ MonoBehaviour:
   defaultMaterial: {fileID: 2100000, guid: d557f8d4e073a401e9d9e10f84a54764, type: 2}
   tileCanvas: {fileID: 223764530504157236}
   resourcePanel: {fileID: 1481259770237950}
-  resourceNumber: {fileID: 114504066426365584}
+  resourceValueText: {fileID: 114504066426365584}
 --- !u!222 &222557095306865456
 CanvasRenderer:
   m_ObjectHideFlags: 1

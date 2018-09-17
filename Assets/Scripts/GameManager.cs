@@ -11,12 +11,14 @@ public class GameManager : MonoBehaviour {
     public Farm farmPrefab;
     public Store storePrefab;
     public Road roadPrefab;
+    public ResourceTransport transportPrefab;
 
     //UI
     public Slider timer;
     public Text moneyText;
     public Text researchText;
     public Button farmButton;
+    public Text versionNumber;
 
     //Gameboard variables
     private Tile [,] gameBoard;
@@ -38,6 +40,8 @@ public class GameManager : MonoBehaviour {
         gameBoard = new Tile[columns, rows];
         CreateTileBoard();
         timer.value = timer.minValue;
+        UpdateMoneyText(playerManager.money);
+        versionNumber.text = "Version: " + Application.version;
 	}
 	
 	// Update is called once per frame
@@ -86,7 +90,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void UpdateMoneyText(float money) {
-        moneyText.text = "Money: " + money.ToString();
+        moneyText.text = "Money: " + money.ToString("C");
     }
 
     public void UpdateResearchText(float research) {
@@ -162,40 +166,40 @@ public class GameManager : MonoBehaviour {
             case Direction.DIRECTION_UP:
                 toTile = GetTileUp(fromTile);
                 //can tile recieve input
-                if (toTile.CanInputResources(Direction.DIRECTION_DOWN))
+                if (toTile != null && toTile.CanInputResources(Direction.DIRECTION_DOWN))
                 {
-                    toTile.AddResourceNumberValue(amount);
-                    fromTile.SubtractResourceNumberValue(amount);
+                    ResourceTransport transport = Instantiate(transportPrefab, fromTile.transform.position, Quaternion.identity);
+                    transport.StartJourney(fromTile, toTile, amount);
                 }
 
                 break;
             case Direction.DIRECTION_RIGHT:
                 toTile = GetTileRight(fromTile);
                 //can tile recieve input
-                if (toTile.CanInputResources(Direction.DIRECTION_LEFT))
+                if (toTile != null && toTile.CanInputResources(Direction.DIRECTION_LEFT))
                 {
-                    toTile.AddResourceNumberValue(amount);
-                    fromTile.SubtractResourceNumberValue(amount);
+                    ResourceTransport transport = Instantiate(transportPrefab, fromTile.transform.position, Quaternion.identity);
+                    transport.StartJourney(fromTile, toTile, amount);
                 }
 
                 break;
             case Direction.DIRECTION_DOWN:
                 toTile = GetTileDown(fromTile);
                 //can tile recieve input
-                if (toTile.CanInputResources(Direction.DIRECTION_UP))
+                if (toTile != null && toTile.CanInputResources(Direction.DIRECTION_UP))
                 {
-                    toTile.AddResourceNumberValue(amount);
-                    fromTile.SubtractResourceNumberValue(amount);
+                    ResourceTransport transport = Instantiate(transportPrefab, fromTile.transform.position, Quaternion.identity);
+                    transport.StartJourney(fromTile, toTile, amount);
                 }
 
                 break;
             case Direction.DIRECTION_LEFT:
                 toTile = GetTileLeft(fromTile);
                 //can tile recieve input
-                if (toTile.CanInputResources(Direction.DIRECTION_RIGHT))
+                if (toTile != null && toTile.CanInputResources(Direction.DIRECTION_RIGHT))
                 {
-                    toTile.AddResourceNumberValue(amount);
-                    fromTile.SubtractResourceNumberValue(amount);
+                    ResourceTransport transport = Instantiate(transportPrefab, fromTile.transform.position, Quaternion.identity);
+                    transport.StartJourney(fromTile, toTile, amount);
                 }
 
                 break;

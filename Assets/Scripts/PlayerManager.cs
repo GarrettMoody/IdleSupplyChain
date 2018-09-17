@@ -28,13 +28,35 @@ public class PlayerManager : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-        //Called first frame of mouse down
-        if(Input.GetMouseButton(0)){
-            mouseDownTimeDelta += Time.deltaTime;
-        }
-
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //Called first frame of mouse down
+        //Hand should be empty
+        if (Input.GetMouseButtonDown(0))
+        {
+            mouseDownTimeDelta = 0;
+        }
+
+        //If mouse button down
+        if (Input.GetMouseButton(0))
+        {
+            mouseDownTimeDelta += Time.deltaTime;
+            //if hand is empty and mouse has been down over object for more than .15 seconds
+            if (mouseDownTimeDelta > .15f && objectInHand.gameObject == null)
+            {
+                //Pointing to object
+                if (Physics.Raycast(ray, out hit, 100.0f) && hit.transform.gameObject != null)
+                {
+                    //object pointing at is Tile and not FreeTile
+                    if (IsObjectTile(hit.transform.gameObject) && hit.transform.gameObject.GetComponent<FreeTile>() == null)
+                    {
+                        //pick up object pointing at
+                        PickUpGridObject(hit.transform.gameObject);
+                    }
+                }
+            }
+        }
         
         //Called first frame of mouse up
         if (Input.GetMouseButtonUp(0))
@@ -44,13 +66,14 @@ public class PlayerManager : MonoBehaviour {
             {
                 if (Physics.Raycast(ray, out hit, 100.0f))
                 {
-                    //Pointing to FreeTile
+                    //Pointing at FreeTile
                     if (hit.transform.gameObject.GetComponent<FreeTile>() != null)
                     {
                         //object in hand is tile
                         if (IsObjectTile(objectInHand.gameObject))
                         {
-                            if(mouseDownTimeDelta < .25f) {
+                            if (mouseDownTimeDelta < .15f)
+                            {
                                 //tile was clicked
                                 objectInHand.gameObject.GetComponent<Tile>().OnClick();
                             }
@@ -68,17 +91,19 @@ public class PlayerManager : MonoBehaviour {
                     }
                 }
             }
-        }
-
-        //Called first frame of mouse down
-        //Hand should be empty
-        if (Input.GetMouseButtonDown(0)) {
-            mouseDownTimeDelta = 0;
-            //Pointing to object
-            if (Physics.Raycast(ray, out hit, 100.0f) && hit.transform.gameObject != null) {
-                //Object is Tile and not FreeTile
-                if(IsObjectTile(hit.transform.gameObject) && hit.transform.gameObject.GetComponent<FreeTile>() == null){
-                    PickUpGridObject(hit.transform.gameObject);
+            else
+            {//hand is empty 
+                if (Physics.Raycast(ray, out hit, 100.0f))
+                {
+                    //mouse was clicked
+                    if (mouseDownTimeDelta < .15f)
+                    {
+                        //if pointing at a tile thats not freetile
+                        if (hit.transform.gameObject.GetComponent<Tile>() != null && hit.transform.gameObject.GetComponent<FreeTile>() == null)
+                        {
+                            hit.transform.gameObject.GetComponent<Tile>().OnClick();
+                        }
+                    }
                 }
             }
         }
@@ -143,6 +168,11 @@ public class PlayerManager : MonoBehaviour {
 
     private bool IsObjectTile(GameObject gameObject) {
         return gameObject.GetComponent<Tile>() != null ? true : false;
+    }
+
+    public void AddMoney(float moneyToAdd) {
+        money += moneyToAdd;
+        gameManager.UpdateMoneyText(money);
     }
 
 }

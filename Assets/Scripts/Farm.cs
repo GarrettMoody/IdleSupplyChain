@@ -9,12 +9,10 @@ public class Farm : Tile {
 	protected override void Start () {
         base.Start();
         validInput = new bool[] { false, false, false, false }; //cannot input;
-        validOutput[Direction.DIRECTION_UP] = false;
-        validOutput[Direction.DIRECTION_RIGHT] = false;
-        validOutput[Direction.DIRECTION_DOWN] = false;
+        validOutput = new bool[] { false, false, false, false }; 
         validOutput[Direction.DIRECTION_LEFT] = true;
 
-        maxResourceNumber = 10;
+        maxResourceValue = 10;
 	}
 	
 	// Update is called once per frame
@@ -25,10 +23,10 @@ public class Farm : Tile {
     public override void CompleteAction()
     {
         base.CompleteAction();
-        AddResourceNumberValue(1);
+        AddResourceValue(1);
 
         //if there is enough resources to go around
-        if (resourceNumberValue >= GetNumberOfValidOutputs())
+        if (resourceValue >= GetNumberOfValidOutputs())
         {
             //for each direction
             for (int index = 0; index < validOutput.Length; index++)

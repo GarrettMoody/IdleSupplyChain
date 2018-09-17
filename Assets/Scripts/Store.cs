@@ -9,11 +9,18 @@ public class Store : Tile {
         base.Start();
         validInput = new bool[] {true, true, true, true}; //can input anywhere
         validOutput = new bool[] { false, false, false, false }; //cannot output
-        maxResourceNumber = 10;
+        maxResourceValue = 10;
 	}
 	
 	// Update is called once per frame
 	protected override void Update () {
         base.Update();
 	}
+
+    public override void OnClick()
+    {
+        base.OnClick();
+        playerManager.AddMoney(resourceValue);
+        SubtractResourceValue(resourceValue);
+    }
 }
