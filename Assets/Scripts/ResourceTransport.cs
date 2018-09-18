@@ -30,7 +30,7 @@ public class ResourceTransport : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (onJourney) {
-            float distanceTraveled = (Time.time - startTime) * (journeyLength / gameManager.timerScale);
+            float distanceTraveled = (Time.time - startTime + .02f) * (journeyLength / gameManager.timerScale);
             float journeyFraction = distanceTraveled / journeyLength;
             this.transform.position = Vector3.Lerp(startPosition, endPosition, journeyFraction);
             if(this.transform.position == endPosition) {
